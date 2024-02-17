@@ -105,7 +105,9 @@ public class EmployeeController {
     @ApiOperation("根据ID查询员工信息")
     public Result<Employee> empQuery(@PathVariable String id){
         log.info("查询员工信息，参数:id={}",id);
-        return Result.success(employeeService.empSearch(id));
+        Employee employee = employeeService.empSearch(id);
+        employee.setPassword("****");
+        return Result.success(employee);
     }
     @PutMapping
     @ApiOperation("修改员工信息")
