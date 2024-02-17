@@ -101,4 +101,11 @@ public class EmployeeController {
         employeeService.statusSwitch(id,status);
         return Result.success();
     }
+    @PutMapping
+    @ApiOperation("修改员工信息")
+    public Result updateEmp(@RequestBody EmployeeDTO employeeDTO){
+        log.info("修改员工信息，参数:{}",employeeDTO);
+        employeeService.updateEmp(employeeDTO);
+        return Result.success();
+    }
 }

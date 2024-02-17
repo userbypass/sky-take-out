@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
+
     /**
      * @return com.sky.entity.Employee
      * @Description 员工登录
@@ -61,6 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         //3、返回实体对象
         return employee;
     }
+
     /**
      * @return void
      * @Description 新增员工
@@ -80,11 +82,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         BaseContext.removeCurrentId();
         employeeMapper.insert(employee);
     }
+
     /**
+     * @return com.sky.result.PageResult
      * @Description 根据员工姓名分页查询员工信息
      * @Date 2024/2/17 17:27
      * @Param [employeePageQueryDTO]
-     * @return com.sky.result.PageResult
      */
     @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
@@ -92,14 +95,42 @@ public class EmployeeServiceImpl implements EmployeeService {
         Page<Employee> empPage = (Page<Employee>) employeeMapper.searchEmpList(employeePageQueryDTO.getName());
         return new PageResult(empPage.getTotal(), empPage.getResult());
     }
+
     /**
-     * @Description 切换员工账号启用状态
-     * @Date 2024/2/17 20:30
-     * @Param [id, status]
      * @return void
+     * @Description 切换员工账号启用状态
+     * @Date 2024/2/17 20:31
+     * @Param [id, status]
      */
     @Override
     public void statusSwitch(Long id, Integer status) {
-        employeeMapper.update(Employee.builder().id(id).status(status).updateTime(LocalDateTime.now()).build());
+        employeeMapper.update(Employee.builder()
+                .id(id)
+                .status(status)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build());
+        BaseContext.removeCurrentId();
+    }
+
+    /**
+     * @return void
+     * @Description 更新员工信息
+     * @Date 2024/2/17 20:39
+     * @Param [employeeDTO]
+     */
+    @Override
+    public void updateEmp(EmployeeDTO employeeDTO) {
+        employeeMapper.update(Employee.builder()
+                .id(employeeDTO.getId())
+                .username(employeeDTO.getUsername())
+                .name(employeeDTO.getName())
+                .phone(employeeDTO.getPhone())
+                .sex(employeeDTO.getSex())
+                .idNumber(employeeDTO.getIdNumber())
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build());
+        BaseContext.removeCurrentId();
     }
 }
