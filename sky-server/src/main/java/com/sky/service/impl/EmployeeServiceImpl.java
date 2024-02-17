@@ -1,9 +1,9 @@
 package com.sky.service.impl;
 
-import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
@@ -13,8 +13,6 @@ import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.properties.JwtProperties;
 import com.sky.service.EmployeeService;
-import com.sky.utils.JwtUtil;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,16 +24,12 @@ import java.time.LocalDateTime;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
-    private JwtProperties jwtProperties;
-    @Autowired
     private EmployeeMapper employeeMapper;
-    @Autowired
-    private HttpServletRequest request;
     /**
-     * 员工登录
-     *
-     * @param employeeLoginDTO
-     * @return
+     * @Description 员工登录
+     * @Date 2024/2/17 16:30
+     * @Param [employeeLoginDTO]
+     * @return com.sky.entity.Employee
      */
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
@@ -79,10 +73,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateTime(LocalDateTime.now());
         String defaultPassword = DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes());
         employee.setPassword(defaultPassword);
-        Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(),request.getHeader(jwtProperties.getAdminTokenName()));
-        Long createUser = ((Integer)claims.get(JwtClaimsConstant.EMP_ID)).longValue();
-        employee.setCreateUser(createUser);
-        employee.setUpdateUser(createUser);
+        employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        BaseContext.removeCurrentId();
         employeeMapper.insert(employee);
     }
 }
