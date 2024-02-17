@@ -121,17 +121,12 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void updateEmp(EmployeeDTO employeeDTO) {
-        employeeMapper.update(Employee.builder()
-                .id(employeeDTO.getId())
-                .username(employeeDTO.getUsername())
-                .name(employeeDTO.getName())
-                .phone(employeeDTO.getPhone())
-                .sex(employeeDTO.getSex())
-                .idNumber(employeeDTO.getIdNumber())
-                .updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())
-                .build());
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
         BaseContext.removeCurrentId();
+        employeeMapper.update(employee);
     }
 
     @Override
