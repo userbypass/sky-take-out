@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper
 public interface EmployeeMapper {
-
     /**
      * 根据用户名查询员工
      * @param username
@@ -28,4 +27,6 @@ public interface EmployeeMapper {
      */
     List<Employee> searchEmpList (String name);
     void update(Employee employee);
+    @Select("select  * from employee where id = #{id}")
+    Employee search(String id);
 }

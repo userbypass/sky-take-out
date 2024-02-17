@@ -22,4 +22,6 @@ public interface EmployeeService {
     void statusSwitch(Long id, Integer status);
 
     void updateEmp(EmployeeDTO employeeDTO);
+
+    Employee empSearch(String id);
 }

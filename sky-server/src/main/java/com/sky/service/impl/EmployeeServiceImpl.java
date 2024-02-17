@@ -133,4 +133,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .build());
         BaseContext.removeCurrentId();
     }
+
+    @Override
+    public Employee empSearch(String id) {
+        return employeeMapper.search(id);
+    }
 }

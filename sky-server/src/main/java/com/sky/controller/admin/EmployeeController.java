@@ -101,6 +101,12 @@ public class EmployeeController {
         employeeService.statusSwitch(id,status);
         return Result.success();
     }
+    @GetMapping("{id}")
+    @ApiOperation("根据ID查询员工信息")
+    public Result<Employee> empQuery(@PathVariable String id){
+        log.info("查询员工信息，参数:id={}",id);
+        return Result.success(employeeService.empSearch(id));
+    }
     @PutMapping
     @ApiOperation("修改员工信息")
     public Result updateEmp(@RequestBody EmployeeDTO employeeDTO){
