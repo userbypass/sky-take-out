@@ -4,7 +4,6 @@ import com.sky.entity.Employee;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
 import java.util.List;
 
 @Mapper
@@ -28,4 +27,5 @@ public interface EmployeeMapper {
      * @return java.util.List<com.sky.entity.Employee>
      */
     List<Employee> searchEmpList (String name);
+    void update(Employee employee);
 }

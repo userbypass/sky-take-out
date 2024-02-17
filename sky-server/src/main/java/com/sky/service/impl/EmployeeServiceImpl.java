@@ -92,4 +92,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         Page<Employee> empPage = (Page<Employee>) employeeMapper.searchEmpList(employeePageQueryDTO.getName());
         return new PageResult(empPage.getTotal(), empPage.getResult());
     }
+    /**
+     * @Description 切换员工账号启用状态
+     * @Date 2024/2/17 20:30
+     * @Param [id, status]
+     * @return void
+     */
+    @Override
+    public void statusSwitch(Long id, Integer status) {
+        employeeMapper.update(Employee.builder().id(id).status(status).updateTime(LocalDateTime.now()).build());
+    }
 }

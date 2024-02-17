@@ -39,6 +39,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/login")
+    @ApiOperation("登录")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
 
@@ -68,6 +69,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/logout")
+    @ApiOperation("退出登录")
     public Result<String> logout() {
         return Result.success();
     }
@@ -78,6 +80,7 @@ public class EmployeeController {
      * @return com.sky.result.Result<java.lang.String>
      */
     @PostMapping
+    @ApiOperation("新增员工")
     public Result<String> add(@RequestBody EmployeeDTO employeeDTO){
         log.info("新增员工{}",employeeDTO);
         employeeService.add(employeeDTO);
@@ -89,5 +92,13 @@ public class EmployeeController {
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
         log.info("分页查询员工{}", employeePageQueryDTO);
         return Result.success(employeeService.pageQuery(employeePageQueryDTO));
+    }
+
+    @PostMapping("/status/{status}")
+    @ApiOperation("切换员工启用状态")
+    public Result empStatusSwitch(@PathVariable Integer status, Long id){
+        log.info("修改启用状态，参数:id={},status={}",id,status);
+        employeeService.statusSwitch(id,status);
+        return Result.success();
     }
 }
