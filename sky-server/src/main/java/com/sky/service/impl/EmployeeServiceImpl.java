@@ -1,24 +1,26 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
-import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 @Service
@@ -26,10 +28,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
     /**
+     * @return com.sky.entity.Employee
      * @Description 员工登录
      * @Date 2024/2/17 16:30
      * @Param [employeeLoginDTO]
-     * @return com.sky.entity.Employee
      */
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
@@ -60,15 +62,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
     /**
+     * @return void
      * @Description 新增员工
      * @Date 2024/2/17 12:36
      * @Param [employeeDTO]
-     * @return void
      */
     @Override
     public void add(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
-        BeanUtils.copyProperties(employeeDTO,employee);
+        BeanUtils.copyProperties(employeeDTO, employee);
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
         String defaultPassword = DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes());
@@ -77,5 +79,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
         BaseContext.removeCurrentId();
         employeeMapper.insert(employee);
+    }
+    /**
+     * @Description 根据员工姓名分页查询员工信息
+     * @Date 2024/2/17 17:27
+     * @Param [employeePageQueryDTO]
+     * @return com.sky.result.PageResult
+     */
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        Page<Employee> empPage = (Page<Employee>) employeeMapper.searchEmpList(employeePageQueryDTO.getName());
+        return new PageResult(empPage.getTotal(), empPage.getResult());
     }
 }
