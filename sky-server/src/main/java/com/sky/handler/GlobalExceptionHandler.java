@@ -34,8 +34,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result exceptionHandler(SQLIntegrityConstraintViolationException ex){
         // userName已使用
-        String duplicateName = ex.getMessage().split(" ")[2];
-        String msg = duplicateName.substring(1,duplicateName.length()-1)+"已存在，请重新输入";
-        return Result.error(msg);
+        String errMessage = ex.getMessage();
+        if (errMessage.contains("Duplicate entry")) {
+            String duplicateName = errMessage.split(" ")[2];
+            String msg = duplicateName.substring(1,duplicateName.length()-1)+"已存在，请重新输入";
+            return Result.error(msg);
+        }
+        else return Result.error("未知异常");
     }
 }
