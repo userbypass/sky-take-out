@@ -1,8 +1,9 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.MessageConstant;
 import com.sky.result.Result;
 import com.sky.utils.AliOssUtil;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @RequestMapping("/admin/common")
-@ApiOperation("通用控制器")
+@Api(tags = "通用控制接口")
 public class CommonController {
     @Autowired
     AliOssUtil aliOssUtil;
@@ -33,8 +34,8 @@ public class CommonController {
             String url = aliOssUtil.upload(file.getBytes(), objectName);
             return Result.success(url);
         } catch (IOException e) {
-            log.info("文件上传失败:{}",e.getMessage());
+            log.error("{}:{}",MessageConstant.UPLOAD_FAILED,e.getMessage());
         }
-        return Result.error("文件上传失败");
+        return Result.error(MessageConstant.UPLOAD_FAILED);
     }
 }

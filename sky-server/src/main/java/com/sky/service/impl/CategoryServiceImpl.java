@@ -29,7 +29,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
-    private CategoryMapper categoryMapper;
+    CategoryMapper categoryMapper;
     @Autowired
     private DishMapper dishMapper;
     @Autowired
