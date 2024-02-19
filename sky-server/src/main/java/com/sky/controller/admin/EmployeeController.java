@@ -32,12 +32,6 @@ public class EmployeeController {
     @Autowired
     private JwtProperties jwtProperties;
 
-    /**
-     * 登录
-     *
-     * @param employeeLoginDTO
-     * @return
-     */
     @PostMapping("/login")
     @ApiOperation("登录")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
@@ -63,22 +57,12 @@ public class EmployeeController {
         return Result.success(employeeLoginVO);
     }
 
-    /**
-     * 退出
-     *
-     * @return
-     */
     @PostMapping("/logout")
     @ApiOperation("退出登录")
     public Result<String> logout() {
         return Result.success();
     }
-    /**
-     * @Description 新增员工
-     * @Date 2024/2/17 11:40
-     * @Param []
-     * @return com.sky.result.Result<java.lang.String>
-     */
+
     @PostMapping
     @ApiOperation("新增员工")
     public Result<String> add(@RequestBody EmployeeDTO employeeDTO){
