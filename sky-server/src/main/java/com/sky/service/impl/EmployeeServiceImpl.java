@@ -58,7 +58,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             //账号被锁定
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
-
         //3、返回实体对象
         return employee;
     }
@@ -73,13 +72,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void add(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
         String defaultPassword = DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes());
         employee.setPassword(defaultPassword);
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
-        BaseContext.removeCurrentId();
         employeeMapper.insert(employee);
     }
 
@@ -110,7 +104,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .updateTime(LocalDateTime.now())
                 .updateUser(BaseContext.getCurrentId())
                 .build());
-        BaseContext.removeCurrentId();
     }
 
     /**
@@ -123,12 +116,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void updateEmp(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO,employee);
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());
-        BaseContext.removeCurrentId();
         employeeMapper.update(employee);
     }
-
+    /**
+     * @Description 根据ID查询员工信息
+     * @Date 2024/2/19 17:19
+     * @Param [id]
+     * @return com.sky.entity.Employee
+     */
     @Override
     public Employee empSearch(String id) {
         return employeeMapper.search(id);
