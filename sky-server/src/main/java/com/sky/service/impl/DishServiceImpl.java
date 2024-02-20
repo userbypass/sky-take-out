@@ -13,6 +13,7 @@ import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetMealDishMapper;
 import com.sky.result.PageResult;
+import com.sky.result.Result;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
@@ -105,5 +106,20 @@ public class DishServiceImpl implements DishService {
     @Override
     public void updateStatus(Integer status,Long id) {
         dishMapper.updateStatus(status,id);
+    }
+    /**
+     * @Description 根据菜品ID查询菜品及其口味信息
+     * @Date 2024/2/20 18:12
+     * @Param [id]
+     * @return com.sky.vo.DishVO
+     */
+    @Override
+    public DishVO getByIdWithFlavor(Long id) {
+        Dish dish = dishMapper.selectById(id);
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish,dishVO);
+        List<DishFlavor> dishFlavors = dishFlavorMapper.selectByDishId(id);
+        dishVO.setFlavors(dishFlavors);
+        return dishVO;
     }
 }
