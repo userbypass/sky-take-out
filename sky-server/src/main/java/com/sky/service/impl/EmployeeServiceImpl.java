@@ -115,14 +115,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void updateEmp(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
-        BeanUtils.copyProperties(employeeDTO,employee);
+        BeanUtils.copyProperties(employeeDTO, employee);
         employeeMapper.update(employee);
     }
+
     /**
+     * @return com.sky.entity.Employee
      * @Description 根据ID查询员工信息
      * @Date 2024/2/19 17:19
      * @Param [id]
-     * @return com.sky.entity.Employee
      */
     @Override
     public Employee empSearch(String id) {

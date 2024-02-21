@@ -21,7 +21,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PutMapping;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,13 +86,13 @@ public class DishServiceImpl implements DishService {
         // 判断菜品是否起售
         ids.forEach(id -> {
             Dish dish = dishMapper.selectById(id);
-            if(dish==null) throw new DeletionNotAllowedException(MessageConstant.DISH_NOT_EXIST);
+            if (dish == null) throw new DeletionNotAllowedException(MessageConstant.DISH_NOT_EXIST);
             if (Objects.equals(dish.getStatus(), StatusConstant.ENABLE))
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
         });
         // 判断菜品是否关联套餐
         List<Long> setMealIdList = setMealDishMapper.selectByDishIds(ids);
-        if(setMealIdList!=null && !setMealIdList.isEmpty()){
+        if (setMealIdList != null && !setMealIdList.isEmpty()) {
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
         // 删除菜品
@@ -97,29 +100,56 @@ public class DishServiceImpl implements DishService {
         // 删除口味
         dishFlavorMapper.deleteByDishIds(ids);
     }
+
     /**
+     * @return void
      * @Description 修改菜品起售状态
      * @Date 2024/2/20 15:51
      * @Param [status]
-     * @return void
      */
     @Override
-    public void updateStatus(Integer status,Long id) {
-        dishMapper.updateStatus(status,id);
+    public void updateStatus(Integer status, Long id) {
+        dishMapper.updateStatus(status, id);
     }
+
     /**
+     * @return com.sky.vo.DishVO
      * @Description 根据菜品ID查询菜品及其口味信息
      * @Date 2024/2/20 18:12
      * @Param [id]
-     * @return com.sky.vo.DishVO
      */
     @Override
     public DishVO getByIdWithFlavor(Long id) {
         Dish dish = dishMapper.selectById(id);
         DishVO dishVO = new DishVO();
-        BeanUtils.copyProperties(dish,dishVO);
+        BeanUtils.copyProperties(dish, dishVO);
         List<DishFlavor> dishFlavors = dishFlavorMapper.selectByDishId(id);
         dishVO.setFlavors(dishFlavors);
         return dishVO;
+    }
+    /**
+     * @Description 修改菜品及其口味
+     * @Date 2024/2/20 19:02
+     * @Param [dishDTO]
+     * @return void
+     */
+    @Transactional
+    @Override
+    public void updateWithFlavor(DishDTO dishDTO) {
+        //更新1条菜品表数据
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        dishMapper.updateById(dish);
+        //删除旧菜品表数据
+        Long dishId = dish.getId();
+        List<Long> dishIdList = new ArrayList<>();
+        dishIdList.add(dishId);
+        dishFlavorMapper.deleteByDishIds(dishIdList);
+        //插入多条口味表数据
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && !flavors.isEmpty()) {
+            flavors.forEach(dishFlavor -> dishFlavor.setDishId(dishId));
+            dishFlavorMapper.insert(flavors);
+        }
     }
 }

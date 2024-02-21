@@ -47,7 +47,20 @@ public interface DishMapper {
      * @Param [ids]
      */
     void deleteByIds(List<Long> ids);
-
+    /**
+     * @Description 修改菜品启用状态
+     * @Date 2024/2/20 19:55
+     * @Param [status, id]
+     * @return void
+     */
     @Update("update dish set status = #{status} where id = #{id}")
     void updateStatus(Integer status, Long id);
+    /**
+     * @Description 更新菜品信息
+     * @Date 2024/2/20 19:55
+     * @Param [dish]
+     * @return void
+     */
+    @AutoFill(OperationType.UPDATE)
+    void updateById(Dish dish);
 }

@@ -21,36 +21,48 @@ import java.util.List;
 public class DishController {
     @Autowired
     DishService dishService;
+
     @PostMapping
     @ApiOperation("新增菜品")
     public Result save(@RequestBody DishDTO dishDTO) {
-        log.info("新增菜品，参数:{}",dishDTO);
+        log.info("新增菜品，参数:{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
         return Result.success();
     }
+
     @GetMapping("/page")
     @ApiOperation("分页查询")
-    public Result<PageResult> page( DishPageQueryDTO dishPageQueryDTO){
-        log.info("分页查询，参数:{}",dishPageQueryDTO);
+    public Result<PageResult> page(DishPageQueryDTO dishPageQueryDTO) {
+        log.info("分页查询，参数:{}", dishPageQueryDTO);
         return Result.success(dishService.page(dishPageQueryDTO));
     }
+
     @DeleteMapping
     @ApiOperation("删除菜品")
-    public Result delete(@RequestParam List<Long> ids){
-        log.info("删除菜品，参数:{}",ids);
+    public Result delete(@RequestParam List<Long> ids) {
+        log.info("删除菜品，参数:{}", ids);
         dishService.deleteBatch(ids);
         return Result.success();
     }
+
     @PostMapping("status/{status}")
-    public Result updateStatus(@PathVariable Integer status,Long id){
-        log.info("修改菜品起售状态，参数:{}",status);
-        dishService.updateStatus(status,id);
+    public Result updateStatus(@PathVariable Integer status, Long id) {
+        log.info("修改菜品起售状态，参数:{}", status);
+        dishService.updateStatus(status, id);
         return Result.success();
     }
 
     @GetMapping("/{id}")
-    public Result<DishVO> query(@PathVariable Long id){
-        log.info("查询菜品信息,参数:{}",id);
+    public Result<DishVO> query(@PathVariable Long id) {
+        log.info("查询菜品信息,参数:{}", id);
         return Result.success(dishService.getByIdWithFlavor(id));
+    }
+
+    @PutMapping
+    @ApiOperation("更新菜品")
+    public Result update(@RequestBody DishDTO dishDTO) {
+        log.info("更新菜品，参数:{}", dishDTO);
+        dishService.updateWithFlavor(dishDTO);
+        return Result.success();
     }
 }
