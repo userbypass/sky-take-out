@@ -65,38 +65,40 @@ public class EmployeeController {
 
     @PostMapping
     @ApiOperation("新增员工")
-    public Result<String> add(@RequestBody EmployeeDTO employeeDTO){
-        log.info("新增员工{}",employeeDTO);
+    public Result<String> add(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("新增员工{}", employeeDTO);
         employeeService.add(employeeDTO);
         return Result.success();
     }
 
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
-    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
         log.info("分页查询员工{}", employeePageQueryDTO);
         return Result.success(employeeService.pageQuery(employeePageQueryDTO));
     }
 
     @PostMapping("/status/{status}")
     @ApiOperation("切换员工启用状态")
-    public Result empStatusSwitch(@PathVariable Integer status, Long id){
-        log.info("修改启用状态，参数:id={},status={}",id,status);
-        employeeService.statusSwitch(id,status);
+    public Result empStatusSwitch(@PathVariable Integer status, Long id) {
+        log.info("修改启用状态，参数:id={},status={}", id, status);
+        employeeService.statusSwitch(id, status);
         return Result.success();
     }
+
     @GetMapping("{id}")
     @ApiOperation("根据ID查询员工信息")
-    public Result<Employee> empQuery(@PathVariable String id){
-        log.info("查询员工信息，参数:id={}",id);
+    public Result<Employee> empQuery(@PathVariable String id) {
+        log.info("查询员工信息，参数:id={}", id);
         Employee employee = employeeService.empSearch(id);
         employee.setPassword("****");
         return Result.success(employee);
     }
+
     @PutMapping
     @ApiOperation("修改员工信息")
-    public Result updateEmp(@RequestBody EmployeeDTO employeeDTO){
-        log.info("修改员工信息，参数:{}",employeeDTO);
+    public Result updateEmp(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("修改员工信息，参数:{}", employeeDTO);
         employeeService.updateEmp(employeeDTO);
         return Result.success();
     }

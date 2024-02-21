@@ -14,6 +14,7 @@ import java.util.List;
 public interface EmployeeMapper {
     /**
      * 根据用户名查询员工
+     *
      * @param username
      * @return
      */
@@ -21,10 +22,10 @@ public interface EmployeeMapper {
     Employee getByUsername(String username);
 
     /**
+     * @return void
      * @Description 新增员工
      * @Date 2024/2/18 17:52
      * @Param [employee]
-     * @return void
      */
     @Insert("insert into employee (name, username, password, phone, sex, id_number, create_time, update_time, create_user, update_user) " +
             "values (#{name},#{username},#{password},#{phone},#{sex},#{idNumber},#{createTime},#{updateTime},#{createUser},#{updateUser}) ")
@@ -32,27 +33,27 @@ public interface EmployeeMapper {
     void insert(Employee employee);
 
     /**
+     * @return java.util.List<com.sky.entity.Employee>
      * @Description 根据员工姓名分页查询员工信息
      * @Date 2024/2/17 17:43
      * @Param [name]
-     * @return java.util.List<com.sky.entity.Employee>
      */
-    List<Employee> searchEmpList (String name);
+    List<Employee> searchEmpList(String name);
 
     /**
+     * @return void
      * @Description 更新员工信息
      * @Date 2024/2/18 17:52
      * @Param [employee]
-     * @return void
      */
     @AutoFill(OperationType.UPDATE)
     void update(Employee employee);
 
     /**
+     * @return com.sky.entity.Employee
      * @Description 根据ID查询员工信息
      * @Date 2024/2/18 17:53
      * @Param [id]
-     * @return com.sky.entity.Employee
      */
     @Select("select  * from employee where id = #{id}")
     Employee search(String id);

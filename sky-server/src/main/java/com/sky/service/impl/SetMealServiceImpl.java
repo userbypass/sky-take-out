@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,19 +39,40 @@ public class SetMealServiceImpl implements SetMealService {
         Page<SetmealVO> pageResult = setmealMapper.pageQuery(pageQueryDTO);
         return new PageResult(pageResult.getTotal(), pageResult.getResult());
     }
+
     /**
-     * @Description 根据ID查询套餐信息及包含菜品
+     * @return com.sky.vo.SetmealVO
+     * @Description 根据ID查询套餐及包含菜品信息
      * @Date 2024/2/21 11:29
      * @Param [id]
-     * @return com.sky.vo.SetmealVO
      */
     @Override
     public SetmealVO getWithDish(Long setmealId) {
         Setmeal setmeal = setmealMapper.getById(setmealId);
         List<SetmealDish> setmealDishList = setMealDishMapper.getBySetmealId(setmealId);
         SetmealVO setmealVO = new SetmealVO();
-        BeanUtils.copyProperties(setmeal,setmealVO);
+        BeanUtils.copyProperties(setmeal, setmealVO);
         setmealVO.setSetmealDishes(setmealDishList);
         return setmealVO;
     }
+
+    /**
+     * @return void
+     * @Description 更新套餐及其包含菜品信息
+     * @Date 2024/2/21 11:59
+     * @Param [setmealDTO]
+     */
+    @Transactional
+    @Override
+    public void updateWithDish(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO,setmeal);
+        // 更新套餐信息
+        setmealMapper.update(setmeal);
+        // 删除原套餐-菜品对应关系
+        setMealDishMapper.deleteBySetmealId(setmealDTO.getId());
+        // 插入新套餐-菜品对应关系
+        setMealDishMapper.insertBatch(setmealDTO.getSetmealDishes(),setmeal.getId());
+    }
+
 }

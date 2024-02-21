@@ -17,29 +17,30 @@ public class GlobalExceptionHandler {
 
     /**
      * 捕获业务异常
+     *
      * @param ex
      * @return
      */
     @ExceptionHandler
-    public Result exceptionHandler(BaseException ex){
+    public Result exceptionHandler(BaseException ex) {
         log.error("异常信息：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
+
     /**
+     * @return com.sky.result.Result
      * @Description 处理userName重复导致的异常
      * @Date 2024/2/17 15:53
      * @Param [ex]
-     * @return com.sky.result.Result
      */
     @ExceptionHandler
-    public Result exceptionHandler(SQLIntegrityConstraintViolationException ex){
+    public Result exceptionHandler(SQLIntegrityConstraintViolationException ex) {
         // userName已使用
         String errMessage = ex.getMessage();
         if (errMessage.contains("Duplicate entry")) {
             String duplicateName = errMessage.split(" ")[2];
-            String msg = duplicateName.substring(1,duplicateName.length()-1)+"已存在，请重新输入";
+            String msg = duplicateName.substring(1, duplicateName.length() - 1) + "已存在，请重新输入";
             return Result.error(msg);
-        }
-        else return Result.error("未知异常");
+        } else return Result.error("未知异常");
     }
 }

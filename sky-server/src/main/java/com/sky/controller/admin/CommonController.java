@@ -34,7 +34,7 @@ public class CommonController {
             String url = aliOssUtil.upload(file.getBytes(), objectName);
             return Result.success(url);
         } catch (IOException e) {
-            log.error("{}:{}",MessageConstant.UPLOAD_FAILED,e.getMessage());
+            log.error("{}:{}", MessageConstant.UPLOAD_FAILED, e.getMessage());
         }
         return Result.error(MessageConstant.UPLOAD_FAILED);
     }

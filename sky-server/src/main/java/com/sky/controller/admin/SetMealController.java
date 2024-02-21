@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -18,14 +19,23 @@ import org.springframework.web.bind.annotation.*;
 public class SetMealController {
     @Autowired
     SetMealService setMealService;
+
     @GetMapping("/page")
     @ApiOperation("分页查询")
-    public Result<PageResult> page(SetmealPageQueryDTO pageQueryDTO){
+    public Result<PageResult> page(SetmealPageQueryDTO pageQueryDTO) {
         return Result.success(setMealService.pageQuery(pageQueryDTO));
     }
+
     @GetMapping("{id}")
     @ApiOperation("根据ID查询")
-    public Result<SetmealVO> query(@PathVariable Long id){
-        return  Result.success(setMealService.getWithDish(id));
+    public Result<SetmealVO> query(@PathVariable Long id) {
+        return Result.success(setMealService.getWithDish(id));
+    }
+
+    @PutMapping
+    @ApiOperation("修改套餐")
+    public Result update(@RequestBody SetmealDTO setmealDTO){
+        setMealService.updateWithDish(setmealDTO);
+        return Result.success();
     }
 }

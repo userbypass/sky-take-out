@@ -13,7 +13,7 @@ public class OssConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public AliOssUtil getAliOssUtil(AliOssProperties properties) {
-        log.info("创建阿里云OSS文件上传对象，参数:{}",properties);
+        log.info("创建阿里云OSS文件上传对象，参数:{}", properties);
         return new AliOssUtil(properties.getEndpoint(),
                 properties.getAccessKeyId(),
                 properties.getAccessKeySecret(),
