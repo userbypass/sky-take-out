@@ -86,4 +86,20 @@ public class SetMealServiceImpl implements SetMealService {
         setmealMapper.updateStatus(Setmeal.builder().status(status).id(id).build());
     }
 
+    /**
+     * @return void
+     * @Description 插入套餐信息
+     * @Date 2024/2/22 15:14
+     * @Param [setmealDTO]
+     */
+    @Override
+    @Transactional
+    public void addWithDishes(SetmealDTO setmealDTO) {
+        // 插入套餐表
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO,setmeal);
+        setmealMapper.insert(setmeal);
+        // 插入套餐-菜品表
+        setMealDishMapper.insertBatch(setmealDTO.getSetmealDishes(), setmeal.getId());
+    }
 }

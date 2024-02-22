@@ -45,4 +45,11 @@ public class SetMealController {
         setMealService.updateStatus(status,id);
         return Result.success();
     }
+
+    @PostMapping
+    @ApiOperation("新增套餐")
+    public Result addWithDishes(@RequestBody SetmealDTO setmealDTO){
+        setMealService.addWithDishes(setmealDTO);
+        return Result.success();
+    }
 }
