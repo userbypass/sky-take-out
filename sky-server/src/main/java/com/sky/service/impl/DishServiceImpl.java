@@ -106,7 +106,7 @@ public class DishServiceImpl implements DishService {
      */
     @Override
     public void updateStatus(Integer status, Long id) {
-        dishMapper.updateStatus(status, id);
+        dishMapper.updateStatus(Dish.builder().status(status).id(id).build());
     }
 
     /**

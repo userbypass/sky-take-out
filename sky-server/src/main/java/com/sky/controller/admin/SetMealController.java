@@ -26,7 +26,7 @@ public class SetMealController {
         return Result.success(setMealService.pageQuery(pageQueryDTO));
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ApiOperation("根据ID查询")
     public Result<SetmealVO> query(@PathVariable Long id) {
         return Result.success(setMealService.getWithDish(id));
@@ -36,6 +36,13 @@ public class SetMealController {
     @ApiOperation("修改套餐")
     public Result update(@RequestBody SetmealDTO setmealDTO){
         setMealService.updateWithDish(setmealDTO);
+        return Result.success();
+    }
+
+    @PostMapping("/status/{status}")
+    @ApiOperation("修改套餐起售状态")
+    public Result updateStatus(@PathVariable Integer status,Long id){
+        setMealService.updateStatus(status,id);
         return Result.success();
     }
 }

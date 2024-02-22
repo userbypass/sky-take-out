@@ -62,8 +62,9 @@ public interface DishMapper {
      * @Date 2024/2/20 19:55
      * @Param [status, id]
      */
-    @Update("update dish set status = #{status} where id = #{id}")
-    void updateStatus(Integer status, Long id);
+    @AutoFill(OperationType.UPDATE)
+    @Update("update dish set status = #{status}, update_time = #{updateTime}, update_user=#{updateUser} where id = #{id}")
+    void updateStatus(Dish dish);
 
     /**
      * @return void
