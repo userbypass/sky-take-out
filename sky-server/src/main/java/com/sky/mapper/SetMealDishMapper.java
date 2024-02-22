@@ -43,4 +43,19 @@ public interface SetMealDishMapper {
      */
     void insertBatch(List<SetmealDish> setmealDishes, Long setmealId);
 
+    /**
+     * @return void
+     * @Description 批量删除套餐-菜品对应关系
+     * @Date 2024/2/22 16:03
+     * @Param [setmealIds]
+     */
+    void deleteBatchBySetmealId(List<Long> setmealIds);
+    
+    /**
+     * @Description 根据套餐ID获取包含菜品中停止销售菜品的数量
+     * @Date 2024/2/22 16:21
+     * @Param []
+     * @return void
+     */
+    Integer getHaltSellDishCountBySetmealId(Long setmealId);
 }

@@ -5,6 +5,8 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.SetmealVO;
 
+import java.util.List;
+
 public interface SetMealService {
     PageResult pageQuery(SetmealPageQueryDTO pageQueryDTO);
 
@@ -15,4 +17,6 @@ public interface SetMealService {
     void updateStatus(Integer status, Long id);
 
     void addWithDishes(SetmealDTO setmealDTO);
+
+    void deleteBatchWithDishes(List<Long> ids);
 }

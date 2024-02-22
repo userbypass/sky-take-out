@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface SetMealMapper {
 
@@ -58,6 +60,29 @@ public interface SetMealMapper {
     @AutoFill(OperationType.UPDATE)
     @Update("update setmeal set status = #{status}, update_time = #{updateTime}, update_user=#{updateUser} where id = #{id}")
     void updateStatus(Setmeal setmeal);
+    
+    /**
+     * @Description 插入套餐信息
+     * @Date 2024/2/22 15:52
+     * @Param [setmeal]
+     * @return void
+     */
     @AutoFill(OperationType.INSERT)
     void insert(Setmeal setmeal);
+    
+    /**
+     * @Description 根据一组套餐ID查询含有在售套餐的数量
+     * @Date 2024/2/22 15:54
+     * @Param [ids]
+     * @return java.lang.Integer
+     */
+    Integer getCountByIds(List<Long> ids);
+    
+    /**
+     * @Description 批量删除套餐信息
+     * @Date 2024/2/22 16:01
+     * @Param [ids]
+     * @return void
+     */
+    void deleteBatch(List<Long> ids);
 }

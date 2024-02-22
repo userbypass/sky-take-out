@@ -2,10 +2,13 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.SetMealDishMapper;
 import com.sky.mapper.SetMealMapper;
 import com.sky.result.PageResult;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -83,6 +87,11 @@ public class SetMealServiceImpl implements SetMealService {
      */
     @Override
     public void updateStatus(Integer status, Long id) {
+        // 起售套餐不能包含未起售菜品
+        if (Objects.equals(1, status)) {
+            Integer haltSellDishCount = setMealDishMapper.getHaltSellDishCountBySetmealId(id);
+            if (haltSellDishCount > 0) throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+        }
         setmealMapper.updateStatus(Setmeal.builder().status(status).id(id).build());
     }
 
@@ -97,9 +106,27 @@ public class SetMealServiceImpl implements SetMealService {
     public void addWithDishes(SetmealDTO setmealDTO) {
         // 插入套餐表
         Setmeal setmeal = new Setmeal();
-        BeanUtils.copyProperties(setmealDTO,setmeal);
+        BeanUtils.copyProperties(setmealDTO, setmeal);
         setmealMapper.insert(setmeal);
         // 插入套餐-菜品表
         setMealDishMapper.insertBatch(setmealDTO.getSetmealDishes(), setmeal.getId());
+    }
+
+    /**
+     * @return void
+     * @Description 批量删除套餐及涉及的套餐-菜品信息
+     * @Date 2024/2/22 15:49
+     * @Param [ids]
+     */
+    @Override
+    @Transactional
+    public void deleteBatchWithDishes(List<Long> ids) {
+        // 在售套餐不可删除
+        Integer count = setmealMapper.getCountByIds(ids);
+        if (count > 0) throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+        // 批量删除套餐信息
+        setmealMapper.deleteBatch(ids);
+        // 批量删除套餐-菜品信息
+        setMealDishMapper.deleteBatchBySetmealId(ids);
     }
 }
