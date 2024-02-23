@@ -11,4 +11,10 @@ sky:
     bucket-name: noir-oss-bucket
     access-key-id: LTAI5tGdgPJ5qjPFhzniKyMm
     access-key-secret: lSNVsovDHIkrOpSBdPAUNBLrYWOyxj
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      # 非必须，默认0号数据库
+      database: 0
 
