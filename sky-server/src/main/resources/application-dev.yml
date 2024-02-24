@@ -17,4 +17,7 @@ sky:
       port: 6379
       # 非必须，默认0号数据库
       database: 0
+  wechat:
+    appid: wx0d5ee3c3882d53c6
+    secret: c5764e5a2111aac5b8cc5e3c0a20aada
 
