@@ -23,6 +23,15 @@ public interface DishMapper {
 
     /**
      * @return java.util.List<com.sky.entity.Dish>
+     * @Description 根据分类id查询起售中的菜品
+     * @Date 2024/2/25 14:06
+     * @Param [categoryId, status]
+     */
+    @Select("select * from dish where category_id = #{categoryId} and status = #{status}")
+    List<Dish> selectByCategoryIdAndStatus(Long categoryId, Integer status);
+
+    /**
+     * @return java.util.List<com.sky.entity.Dish>
      * @Description 根据菜品名称查询菜品
      * @Date 2024/2/21 14:09
      * @Param [dishName]

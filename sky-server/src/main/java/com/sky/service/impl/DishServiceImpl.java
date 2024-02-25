@@ -168,7 +168,7 @@ public class DishServiceImpl implements DishService {
      * @return
      */
     public List<DishVO> listWithFlavor(Dish dish) {
-        List<Dish> dishList = dishMapper.selectByCategoryId(dish.getCategoryId());
+        List<Dish> dishList = dishMapper.selectByCategoryIdAndStatus(dish.getCategoryId(),dish.getStatus());
 
         List<DishVO> dishVOList = new ArrayList<>();
 

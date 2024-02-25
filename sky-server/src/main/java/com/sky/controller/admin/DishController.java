@@ -11,9 +11,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -22,11 +24,15 @@ import java.util.List;
 public class DishController {
     @Autowired
     DishService dishService;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @PostMapping
     @ApiOperation("新增菜品")
     public Result save(@RequestBody DishDTO dishDTO) {
         log.info("新增菜品，参数:{}", dishDTO);
+        // 清理全部缓存数据
+        cleanCache("dish_" + dishDTO.getCategoryId());
         dishService.saveWithFlavor(dishDTO);
         return Result.success();
     }
@@ -39,9 +45,11 @@ public class DishController {
     }
 
     @DeleteMapping
-    @ApiOperation("删除菜品")
+    @ApiOperation("根据菜品ID批量删除菜品")
     public Result delete(@RequestParam List<Long> ids) {
         log.info("删除菜品，参数:{}", ids);
+        // 清理全部缓存数据
+        cleanCache("dish_*");
         dishService.deleteBatch(ids);
         return Result.success();
     }
@@ -49,6 +57,8 @@ public class DishController {
     @PostMapping("status/{status}")
     public Result updateStatus(@PathVariable Integer status, Long id) {
         log.info("修改菜品起售状态，参数:{}", status);
+        // 清理全部缓存数据
+        cleanCache("dish_*");
         dishService.updateStatus(status, id);
         return Result.success();
     }
@@ -63,8 +73,23 @@ public class DishController {
     @ApiOperation("更新菜品")
     public Result update(@RequestBody DishDTO dishDTO) {
         log.info("更新菜品，参数:{}", dishDTO);
+        // 清理全部缓存数据
+        cleanCache("dish_*");
         dishService.updateWithFlavor(dishDTO);
         return Result.success();
+    }
+
+    /**
+     * @return void
+     * @Description 清理 Redis 缓存
+     * @Date 2024/2/25 13:45
+     * @Param [pattern]
+     */
+    private void cleanCache(String pattern) {
+        Set keySet = redisTemplate.keys(pattern);
+        if (keySet != null && !keySet.isEmpty()) {
+            redisTemplate.delete(keySet);
+        }
     }
 
     @GetMapping("/list")
