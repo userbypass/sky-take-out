@@ -29,4 +29,12 @@ public interface ShoppingCartService {
      * @return void
      */
     void cleanShoppingCarts();
+
+    /**
+     * @Description 删除购物车中某一商品
+     * @Date 2024/2/25 20:04
+     * @Param [shoppingCartDTO]
+     * @return void
+     */
+    void subShoppingCarts(ShoppingCartDTO shoppingCartDTO);
 }

@@ -20,4 +20,7 @@
             </if>
         </where>
     </select>
+    <select id="getNumById">
+
+    </select>
 </mapper>

@@ -54,5 +54,17 @@ public class ShoppingCartController {
         shoppingCartService.cleanShoppingCarts();
         return Result.success();
     }
+    
+    /**
+     * @Description 删除购物车中某一商品
+     * @Date 2024/2/25 20:03
+     * @Param [shoppingCartDTO]
+     * @return com.sky.result.Result
+     */
+    @PostMapping("/sub")
+    public Result sub(@RequestBody ShoppingCartDTO shoppingCartDTO){
+        shoppingCartService.subShoppingCarts(shoppingCartDTO);
+        return Result.success();
+    }
 
 }

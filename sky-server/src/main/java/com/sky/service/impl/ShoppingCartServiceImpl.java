@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
@@ -80,13 +81,40 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     /**
+     * @return void
      * @Description 清空购物车
      * @Date 2024/2/25 19:57
      * @Param []
-     * @return void
      */
     @Override
     public void cleanShoppingCarts() {
         shoppingCartMapper.deleteByUserId(BaseContext.getCurrentId());
+    }
+
+    /**
+     * @return void
+     * @Description 删除购物车中某一商品
+     * @Date 2024/2/25 20:04
+     * @Param [shoppingCartDTO]
+     */
+    @Override
+    public void subShoppingCarts(ShoppingCartDTO shoppingCartDTO) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
+        shoppingCart.setUserId(BaseContext.getCurrentId());
+        List<ShoppingCart> shoppingCarts = shoppingCartMapper.list(shoppingCart);
+        if (shoppingCarts != null && !shoppingCarts.isEmpty()) {
+            ShoppingCart cart = shoppingCarts.get(0);
+            // 判断删除商品的份数
+            Integer currentNum = cart.getNumber();
+            if (Objects.equals(1, currentNum)) {
+                // 若当前份数为一，直接删除
+                shoppingCartMapper.deleteByCartId(cart.getId());
+            } else {
+                // 若当前份数大于一，数量减一
+                cart.setNumber(currentNum - 1);
+                shoppingCartMapper.updateNumByCartId(cart);
+            }
+        }
     }
 }
