@@ -67,4 +67,26 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCartMapper.insert(shoppingCart);
         }
     }
+
+    /**
+     * @return java.util.List<com.sky.entity.ShoppingCart>
+     * @Description 获得购物车数据
+     * @Date 2024/2/25 19:50
+     * @Param []
+     */
+    @Override
+    public List<ShoppingCart> getShoppingCarts() {
+        return shoppingCartMapper.list(ShoppingCart.builder().userId(BaseContext.getCurrentId()).build());
+    }
+
+    /**
+     * @Description 清空购物车
+     * @Date 2024/2/25 19:57
+     * @Param []
+     * @return void
+     */
+    @Override
+    public void cleanShoppingCarts() {
+        shoppingCartMapper.deleteByUserId(BaseContext.getCurrentId());
+    }
 }
