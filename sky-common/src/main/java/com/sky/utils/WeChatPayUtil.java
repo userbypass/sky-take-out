@@ -45,9 +45,10 @@ public class WeChatPayUtil {
     private WeChatProperties weChatProperties;
 
     /**
-     * 获取调用微信接口的客户端工具对象
-     *
-     * @return
+     * @Description 获取调用微信接口的客户端工具对象
+     * @Date 2024/2/27 16:39
+     * @Param []
+     * @return org.apache.http.impl.client.CloseableHttpClient
      */
     private CloseableHttpClient getClient() {
         PrivateKey merchantPrivateKey = null;
@@ -73,11 +74,10 @@ public class WeChatPayUtil {
     }
 
     /**
-     * 发送post方式请求
-     *
-     * @param url
-     * @param body
-     * @return
+     * @Description 发送post方式请求
+     * @Date 2024/2/27 16:46
+     * @Param [url, body]
+     * @return java.lang.String
      */
     private String post(String url, String body) throws Exception {
         CloseableHttpClient httpClient = getClient();
