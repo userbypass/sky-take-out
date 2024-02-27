@@ -1,5 +1,7 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -16,6 +18,7 @@ public interface OrderMapper {
 
     /**
      * 根据订单号查询订单
+     *
      * @param orderNumber
      */
     @Select("select * from orders where number = #{orderNumber}")
@@ -23,7 +26,17 @@ public interface OrderMapper {
 
     /**
      * 修改订单信息
+     *
      * @param orders
      */
     void update(Orders orders);
+
+    /**
+     * @return com.github.pagehelper.Page<com.sky.entity.Orders>
+     * @Description 根据用户Id和订单状态查询订单信息
+     * @Date 2024/2/27 21:49
+     * @Param [userId]
+     */
+
+    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 }

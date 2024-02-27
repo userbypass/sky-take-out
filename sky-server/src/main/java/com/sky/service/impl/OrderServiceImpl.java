@@ -1,29 +1,31 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
-import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -118,11 +120,11 @@ public class OrderServiceImpl implements OrderService {
         vo.setPackageStr(jsonObject.getString("package"));
         */
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("nonceStr","");
-        jsonObject.put("paySign","");
-        jsonObject.put("timeStamp",System.currentTimeMillis());
-        jsonObject.put("signType","RSA");
-        jsonObject.put("packageStr","");
+        jsonObject.put("nonceStr", "");
+        jsonObject.put("paySign", "");
+        jsonObject.put("timeStamp", System.currentTimeMillis());
+        jsonObject.put("signType", "RSA");
+        jsonObject.put("packageStr", "");
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
         paySuccess(ordersPaymentDTO.getOrderNumber());
@@ -149,5 +151,27 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+    }
+
+    @Override
+    public PageResult getHistoryRecords(Integer page, Integer pageSize, Integer status) {
+        // 封装ordersPageQueryDTO作为分页查询对象
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setStatus(status);
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        // 分页查询
+        PageHelper.startPage(page, pageSize);
+        Page<Orders> ordersPage = orderMapper.pageQuery(ordersPageQueryDTO);
+        List<Orders> ordersList = ordersPage.getResult();
+        // 封装orderVOList作为查询结果
+        List<OrderVO> orderVOList = new ArrayList<>();
+        ordersList.forEach(orders -> {
+            OrderVO orderVO = new OrderVO();
+            orderVO.setOrderDetailList(orderDetailMapper.getByOrderId(orders.getId()));
+            BeanUtils.copyProperties(orders, orderVO);
+            orderVOList.add(orderVO);
+        });
+        // 返回查询结果
+        return new PageResult(ordersPage.getTotal(), orderVOList);
     }
 }

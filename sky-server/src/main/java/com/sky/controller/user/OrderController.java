@@ -2,6 +2,7 @@ package com.sky.controller.user;
 
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderPaymentVO;
@@ -30,10 +31,10 @@ public class OrderController {
     }
 
     /**
-     * 订单支付
-     *
-     * @param ordersPaymentDTO
-     * @return
+     * @Description 订单支付
+     * @Date 2024/2/27 20:59
+     * @Param [ordersPaymentDTO]
+     * @return com.sky.result.Result<com.sky.vo.OrderPaymentVO>
      */
     @PutMapping("/payment")
     @ApiOperation("订单支付")
@@ -46,5 +47,16 @@ public class OrderController {
         return Result.success(orderPaymentVO);
     }
 
+    /**
+     * @Description 查询历史记录
+     * @Date 2024/2/27 21:16
+     * @Param [ordersPageQueryDTO]
+     * @return com.sky.result.Result<com.sky.result.PageResult>
+     */
+    @GetMapping("/historyOrders")
+    public Result<PageResult> showHistoryRecords(Integer page,Integer pageSize,Integer status){
+        log.info("历史记录查询，页数：{},页大小：{},订单状态：{}",page,pageSize,status);
+        return Result.success(orderService.getHistoryRecords(page,pageSize,status));
+    }
 
 }
