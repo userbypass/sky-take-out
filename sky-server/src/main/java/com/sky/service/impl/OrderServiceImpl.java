@@ -174,4 +174,18 @@ public class OrderServiceImpl implements OrderService {
         // 返回查询结果
         return new PageResult(ordersPage.getTotal(), orderVOList);
     }
+
+    /**
+     * @return com.sky.result.Result<com.sky.vo.OrderVO>
+     * @Description 根据订单Id查询订单详情
+     * @Date 2024/2/28 14:16
+     * @Param [id]
+     */
+    @Override
+    public OrderVO getWithDetailByOrderId(Long orderId) {
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orderMapper.getByOrderId(orderId), orderVO);
+        orderVO.setOrderDetailList(orderDetailMapper.getByOrderId(orderId));
+        return orderVO;
+    }
 }

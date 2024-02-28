@@ -7,6 +7,7 @@ import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,17 @@ public class OrderController {
     public Result<PageResult> showHistoryRecords(Integer page,Integer pageSize,Integer status){
         log.info("历史记录查询，页数：{},页大小：{},订单状态：{}",page,pageSize,status);
         return Result.success(orderService.getHistoryRecords(page,pageSize,status));
+    }
+    /**
+     * @Description 根据订单Id查询订单详情
+     * @Date 2024/2/28 14:16
+     * @Param [id]
+     * @return com.sky.result.Result<com.sky.vo.OrderVO>
+     */
+    @GetMapping("orderDetail/{id}")
+    public Result<OrderVO> showOrderDetail(@PathVariable Long id){
+        log.info("订单详情查询，参数：{}",id);
+        return Result.success(orderService.getWithDetailByOrderId(id));
     }
 
 }

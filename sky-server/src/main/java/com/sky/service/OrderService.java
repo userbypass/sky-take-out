@@ -5,6 +5,7 @@ import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 
 public interface OrderService {
     /**
@@ -37,4 +38,12 @@ public interface OrderService {
      * @Param [ordersPageQueryDTO]
      */
     PageResult getHistoryRecords(Integer page, Integer pageSize, Integer status);
+
+    /**
+     * @return com.sky.vo.OrderVO
+     * @Description 根据订单Id查询订单详情
+     * @Date 2024/2/28 14:17
+     * @Param [orderId]
+     */
+    OrderVO getWithDetailByOrderId(Long orderId);
 }
