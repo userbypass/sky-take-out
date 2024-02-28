@@ -41,11 +41,12 @@ public interface OrderMapper {
     Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
+     * @return com.sky.entity.Orders
      * @Description 根据订单id查询订单信息
      * @Date 2024/2/28 14:20
      * @Param [orderId]
-     * @return com.sky.entity.Orders
      */
     @Select("select * from orders where id = #{orderId}")
     Orders getByOrderId(Long orderId);
+
 }

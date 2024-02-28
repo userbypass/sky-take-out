@@ -46,4 +46,12 @@ public interface OrderService {
      * @Param [orderId]
      */
     OrderVO getWithDetailByOrderId(Long orderId);
+
+    /**
+     * @return void
+     * @Description 取消订单
+     * @Date 2024/2/28 14:44
+     * @Param [id]
+     */
+    void cancelOrderByOrderId(Long id);
 }

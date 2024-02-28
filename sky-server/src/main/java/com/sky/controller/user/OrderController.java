@@ -19,23 +19,24 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     @Autowired
     OrderService orderService;
+
     /**
+     * @return com.sky.result.Result<com.sky.vo.OrderSubmitVO>
      * @Description 用户下单
      * @Date 2024/2/26 14:32
      * @Param [ordersSubmitDTO]
-     * @return com.sky.result.Result<com.sky.vo.OrderSubmitVO>
      */
     @PostMapping("/submit")
-    public Result<OrderSubmitVO> orderSubmit(@RequestBody OrdersSubmitDTO ordersSubmitDTO){
-        log.info("用户下单，参数：{}",ordersSubmitDTO);
+    public Result<OrderSubmitVO> orderSubmit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) {
+        log.info("用户下单，参数：{}", ordersSubmitDTO);
         return Result.success(orderService.orderSubmit(ordersSubmitDTO));
     }
 
     /**
+     * @return com.sky.result.Result<com.sky.vo.OrderPaymentVO>
      * @Description 订单支付
      * @Date 2024/2/27 20:59
      * @Param [ordersPaymentDTO]
-     * @return com.sky.result.Result<com.sky.vo.OrderPaymentVO>
      */
     @PutMapping("/payment")
     @ApiOperation("订单支付")
@@ -49,26 +50,40 @@ public class OrderController {
     }
 
     /**
+     * @return com.sky.result.Result<com.sky.result.PageResult>
      * @Description 查询历史记录
      * @Date 2024/2/27 21:16
      * @Param [ordersPageQueryDTO]
-     * @return com.sky.result.Result<com.sky.result.PageResult>
      */
     @GetMapping("/historyOrders")
-    public Result<PageResult> showHistoryRecords(Integer page,Integer pageSize,Integer status){
-        log.info("历史记录查询，页数：{},页大小：{},订单状态：{}",page,pageSize,status);
-        return Result.success(orderService.getHistoryRecords(page,pageSize,status));
+    public Result<PageResult> showHistoryRecords(Integer page, Integer pageSize, Integer status) {
+        log.info("历史记录查询，页数：{},页大小：{},订单状态：{}", page, pageSize, status);
+        return Result.success(orderService.getHistoryRecords(page, pageSize, status));
     }
+
     /**
+     * @return com.sky.result.Result<com.sky.vo.OrderVO>
      * @Description 根据订单Id查询订单详情
      * @Date 2024/2/28 14:16
      * @Param [id]
-     * @return com.sky.result.Result<com.sky.vo.OrderVO>
      */
     @GetMapping("orderDetail/{id}")
-    public Result<OrderVO> showOrderDetail(@PathVariable Long id){
-        log.info("订单详情查询，参数：{}",id);
+    public Result<OrderVO> showOrderDetail(@PathVariable Long id) {
+        log.info("订单详情查询，参数：{}", id);
         return Result.success(orderService.getWithDetailByOrderId(id));
+    }
+
+    /**
+     * @return com.sky.result.Result
+     * @Description 取消订单
+     * @Date 2024/2/28 14:43
+     * @Param [id]
+     */
+    @PutMapping("cancel/{id}")
+    public Result cancelOrder(@PathVariable Long id) {
+        log.info("取消订单，参数：{}", id);
+        orderService.cancelOrderByOrderId(id);
+        return Result.success();
     }
 
 }

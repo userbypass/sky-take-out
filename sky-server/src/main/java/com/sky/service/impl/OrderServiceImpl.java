@@ -10,6 +10,7 @@ import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
@@ -188,5 +189,31 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderMapper.getByOrderId(orderId), orderVO);
         orderVO.setOrderDetailList(orderDetailMapper.getByOrderId(orderId));
         return orderVO;
+    }
+
+    @Override
+    public void cancelOrderByOrderId(Long id) {
+        Orders ordersOriginal = orderMapper.getByOrderId(id);
+        // 判断订单是否存在
+        if (ordersOriginal == null) throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        // 判断订单状态
+        Integer status = ordersOriginal.getStatus();
+        // 订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款
+        // 支付状态 0未支付 1已支付 2退款
+        if (status > 2) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders orders = new Orders();
+        BeanUtils.copyProperties(ordersOriginal, orders);
+        // 设置订单状态为已取消
+        orders.setStatus(6);
+        orders.setCancelReason("用户取消");
+        orders.setCancelTime(LocalDateTime.now());
+        // 待付款状态直接取消
+        // 已付款待接单状态取消设置支付状态为退款
+        if (status == 2) {
+            orders.setPayStatus(2);
+        }
+        orderMapper.update(orders);
     }
 }
