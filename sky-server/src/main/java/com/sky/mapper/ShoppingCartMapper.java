@@ -20,7 +20,7 @@ public interface ShoppingCartMapper {
 
     /**
      * @return void
-     * @Description 根据购物信息的ID修改购买商品的份数
+     * @Description 根据购物车的ID修改购买商品的份数
      * @Date 2024/2/25 18:48
      * @Param [cart]
      */
@@ -29,7 +29,7 @@ public interface ShoppingCartMapper {
 
     /**
      * @return void
-     * @Description 插入套餐信息
+     * @Description 插入购物车
      * @Date 2024/2/25 19:01
      * @Param [shoppingCart]
      */
@@ -47,10 +47,18 @@ public interface ShoppingCartMapper {
 
     /**
      * @return void
-     * @Description 根据购物信息的Id删除购物信息
+     * @Description 根据购物车Id删除购物车
      * @Date 2024/2/25 20:20
      * @Param [id]
      */
     @Delete("delete from shopping_cart where id = #{id}")
     void deleteByCartId(Long id);
+
+    /**
+     * @return void
+     * @Description 批量插入购物车
+     * @Date 2024/2/28 15:49
+     * @Param [shoppingCartList]
+     */
+    void insertBatch(List<ShoppingCart> shoppingCartList);
 }

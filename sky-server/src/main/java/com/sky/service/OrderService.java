@@ -54,4 +54,12 @@ public interface OrderService {
      * @Param [id]
      */
     void cancelOrderByOrderId(Long id);
+
+    /**
+     * @Description 重新插入购物车数据
+     * @Date 2024/2/28 15:24
+     * @Param [id]
+     * @return void
+     */
+    void reOrderSubmit(Long id);
 }

@@ -67,7 +67,7 @@ public class OrderController {
      * @Date 2024/2/28 14:16
      * @Param [id]
      */
-    @GetMapping("orderDetail/{id}")
+    @GetMapping("/orderDetail/{id}")
     public Result<OrderVO> showOrderDetail(@PathVariable Long id) {
         log.info("订单详情查询，参数：{}", id);
         return Result.success(orderService.getWithDetailByOrderId(id));
@@ -79,10 +79,23 @@ public class OrderController {
      * @Date 2024/2/28 14:43
      * @Param [id]
      */
-    @PutMapping("cancel/{id}")
+    @PutMapping("/cancel/{id}")
     public Result cancelOrder(@PathVariable Long id) {
         log.info("取消订单，参数：{}", id);
         orderService.cancelOrderByOrderId(id);
+        return Result.success();
+    }
+    
+    /**
+     * @Description 重新插入购物车数据
+     * @Date 2024/2/28 15:53
+     * @Param [id]
+     * @return com.sky.result.Result
+     */
+    @PostMapping("/repetition/{id}")
+    public Result ReOrder(@PathVariable Long id) {
+        log.info("再来一单，参数：{}", id);
+        orderService.reOrderSubmit(id);
         return Result.success();
     }
 

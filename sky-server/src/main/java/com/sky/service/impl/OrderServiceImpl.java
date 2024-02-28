@@ -200,20 +200,44 @@ public class OrderServiceImpl implements OrderService {
         Integer status = ordersOriginal.getStatus();
         // 订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款
         // 支付状态 0未支付 1已支付 2退款
-        if (status > 2) {
+        if (status > Orders.TO_BE_CONFIRMED) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         Orders orders = new Orders();
         BeanUtils.copyProperties(ordersOriginal, orders);
         // 设置订单状态为已取消
-        orders.setStatus(6);
+        orders.setStatus(Orders.CANCELLED);
         orders.setCancelReason("用户取消");
         orders.setCancelTime(LocalDateTime.now());
         // 待付款状态直接取消
         // 已付款待接单状态取消设置支付状态为退款
-        if (status == 2) {
-            orders.setPayStatus(2);
+        if (status.equals(Orders.TO_BE_CONFIRMED)) {
+            orders.setPayStatus(Orders.REFUND);
         }
         orderMapper.update(orders);
+    }
+
+    /**
+     * @return void
+     * @Description 重新插入购物车数据
+     * @Date 2024/2/28 15:40
+     * @Param [id]
+     */
+    @Override
+    public void reOrderSubmit(Long id) {
+        // 取出旧订单信息
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        // 构造新购物车信息
+        List<ShoppingCart> shoppingCartList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        Long userId = BaseContext.getCurrentId();
+        orderDetailList.forEach(orderDetail -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            BeanUtils.copyProperties(orderDetail, shoppingCart);
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(now);
+            shoppingCartList.add(shoppingCart);
+        });
+        shoppingCartMapper.insertBatch(shoppingCartList);
     }
 }
