@@ -71,6 +71,7 @@ public class OrderServiceImpl implements OrderService {
                 .payStatus(Orders.UN_PAID)
                 .phone(address.getPhone())
                 .consignee(address.getConsignee())
+                .address(address.getDetail())
                 .build();
         BeanUtils.copyProperties(ordersSubmitDTO, orders);
         orderMapper.insert(orders);
