@@ -364,6 +364,47 @@ public class OrderServiceImpl implements OrderService {
             orderMapper.update(orders);
         } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
     }
+    
+    /**
+     * @Description 派送订单
+     * @Date 2024/2/29 13:56
+     * @Param [orderId]
+     * @return void
+     */
+    @Override
+    public void deliveryOrder(Long orderId) {
+        Orders ordersOriginal = orderMapper.getByOrderId(orderId);
+        // 订单不存在无法派送
+        if (ordersOriginal == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        // 订单处于已接单状态才能派送订单
+        if (Objects.equals(ordersOriginal.getStatus(), Orders.CONFIRMED)) {
+            Orders orders = Orders.builder()
+                    .id(orderId)
+                    .status(Orders.DELIVERY_IN_PROGRESS)
+                    .build();
+            orderMapper.update(orders);
+        } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+    }
+
+    @Override
+    public void completeOrder(Long orderId) {
+        Orders ordersOriginal = orderMapper.getByOrderId(orderId);
+        // 订单不存在无法完成
+        if (ordersOriginal == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        // 订单处于派送中状态才能完成订单
+        if (Objects.equals(ordersOriginal.getStatus(), Orders.DELIVERY_IN_PROGRESS)) {
+            Orders orders = Orders.builder()
+                    .id(orderId)
+                    .status(Orders.COMPLETED)
+                    .deliveryTime(LocalDateTime.now())
+                    .build();
+            orderMapper.update(orders);
+        } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+    }
 
     /**
      * @return java.util.List<com.sky.vo.OrderVO>

@@ -9,6 +9,7 @@ import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -92,6 +93,31 @@ public class OrderController {
     public Result cancelOrder(@RequestBody OrdersCancelDTO ordersCancelDTO) {
         log.info("取消订单，参数{}", ordersCancelDTO);
         orderService.cancelOrder(ordersCancelDTO);
+        return Result.success();
+    }
+    
+    /**
+     * @Description 派送订单
+     * @Date 2024/2/29 13:57
+     * @Param [id]
+     * @return com.sky.result.Result
+     */
+    @PutMapping("/delivery/{id}")
+    public Result deliveryOrder(@PathVariable Long id) {
+        log.info("派送订单，参数{}", id);
+        orderService.deliveryOrder(id);
+        return Result.success();
+    }
+    
+    /**
+     * @Description 完成订单
+     * @Date 2024/2/29 14:04
+     * @Param [id]
+     * @return com.sky.result.Result
+     */
+    @PutMapping("/complete/{id}")
+    public Result complete(@PathVariable("id") Long id) {
+        orderService.completeOrder(id);
         return Result.success();
     }
 }

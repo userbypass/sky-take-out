@@ -110,4 +110,20 @@ public interface OrderService {
      * @Param [ordersCancelDTO]
      */
     void cancelOrder(OrdersCancelDTO ordersCancelDTO);
+
+    /**
+     * @return void
+     * @Description 派送订单
+     * @Date 2024/2/29 13:54
+     * @Param [orderId]
+     */
+    void deliveryOrder(Long orderId);
+    
+    /**
+     * @Description 完成订单
+     * @Date 2024/2/29 14:01
+     * @Param [orderId]
+     * @return void
+     */
+    void completeOrder(Long orderId);
 }
