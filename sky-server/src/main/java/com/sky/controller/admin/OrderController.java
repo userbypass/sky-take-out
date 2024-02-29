@@ -1,6 +1,8 @@
 package com.sky.controller.admin;
 
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
@@ -8,10 +10,7 @@ import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController("AdminOrderController")
 @RequestMapping("/admin/order")
@@ -54,5 +53,31 @@ public class OrderController {
     public Result<OrderStatisticsVO> queryOrderDetail() {
         log.info("统计各个状态的订单数量");
         return Result.success(orderService.getStatistics());
+    }
+
+    /**
+     * @return com.sky.result.Result
+     * @Description 接单
+     * @Date 2024/2/29 12:30
+     * @Param [ordersConfirmDTO]
+     */
+    @PutMapping("/confirm")
+    public Result confirmOrder(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
+        log.info("接单，参数{}", ordersConfirmDTO);
+        orderService.confirmOrder(ordersConfirmDTO);
+        return Result.success();
+    }
+
+    /**
+     * @return com.sky.result.Result
+     * @Description 拒单
+     * @Date 2024/2/29 12:36
+     * @Param [ordersRejectionDTO]
+     */
+    @PutMapping("/rejection")
+    public Result rejectOrder(@RequestBody OrdersRejectionDTO ordersRejectionDTO) {
+        log.info("拒单，参数{}", ordersRejectionDTO);
+        orderService.rejectOrder(ordersRejectionDTO);
+        return Result.success();
     }
 }

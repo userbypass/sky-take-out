@@ -5,10 +5,11 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
-import com.sky.entity.*;
+import com.sky.dto.*;
+import com.sky.entity.AddressBook;
+import com.sky.entity.OrderDetail;
+import com.sky.entity.Orders;
+import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
@@ -25,12 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -290,6 +287,52 @@ public class OrderServiceImpl implements OrderService {
         orderStatus.put("deliveryInProgress", Orders.DELIVERY_IN_PROGRESS);
         orderStatus.put("toBeConfirmed", Orders.TO_BE_CONFIRMED);
         return orderMapper.getOrderStatusStatistics(orderStatus);
+    }
+
+    /**
+     * @return void
+     * @Description 接单
+     * @Date 2024/2/29 12:31
+     * @Param [ordersConfirmDTO]
+     */
+    @Override
+    public void confirmOrder(OrdersConfirmDTO ordersConfirmDTO) {
+        orderMapper.update(Orders.builder()
+                .id(ordersConfirmDTO.getId())
+                .status(Orders.CONFIRMED)
+                .build());
+    }
+
+    /**
+     * @return void
+     * @Description 拒单
+     * @Date 2024/2/29 12:36
+     * @Param [ordersRejectionDTO]
+     */
+    @Override
+    public void rejectOrder(OrdersRejectionDTO ordersRejectionDTO) {
+        Long orderId = ordersRejectionDTO.getId();
+        Orders ordersOriginal = orderMapper.getByOrderId(orderId);
+        // 订单不存在无法拒单
+        if (ordersOriginal == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        // 订单处于待接单状态才能拒单
+        if (Objects.equals(ordersOriginal.getStatus(), Orders.TO_BE_CONFIRMED)) {
+            Orders orders = Orders.builder()
+                    .id(orderId)
+                    .status(Orders.CANCELLED)
+                    .cancelTime(LocalDateTime.now())
+                    .cancelReason(ordersRejectionDTO.getRejectionReason())
+                    .build();
+            // 如果用户在拒单时已付款，还需要执行退款操作
+            if (Objects.equals(ordersOriginal.getPayStatus(), Orders.PAID)) {
+                System.out.println("执行退款操作...");
+                orders.setPayStatus(Orders.REFUND);
+            }
+            orderMapper.update(orders);
+        }
+        else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
     }
 
     /**

@@ -1,8 +1,6 @@
 package com.sky.service;
 
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.result.PageResult;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
@@ -58,34 +56,44 @@ public interface OrderService {
     void cancelOrderByOrderId(Long id);
 
     /**
+     * @return void
      * @Description 重新插入购物车数据
      * @Date 2024/2/28 15:24
      * @Param [id]
-     * @return void
      */
     void reOrderSubmit(Long id);
-    
+
     /**
+     * @return com.sky.result.PageResult
      * @Description 条件搜索订单信息
      * @Date 2024/2/28 23:26
      * @Param [ordersPageQueryDTO]
-     * @return com.sky.result.PageResult
      */
     PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
-    
+
     /**
+     * @return com.sky.vo.OrderVO
      * @Description 查询订单详情
      * @Date 2024/2/29 10:38
      * @Param [id]
-     * @return com.sky.vo.OrderVO
      */
     OrderVO queryOrderDetail(Long orderId);
 
     /**
+     * @return com.sky.vo.OrderStatisticsVO
      * @Description 统计各个状态的订单数量
      * @Date 2024/2/29 11:02
      * @Param []
-     * @return com.sky.vo.OrderStatisticsVO
      */
     OrderStatisticsVO getStatistics();
+
+    /**
+     * @return void
+     * @Description 接单
+     * @Date 2024/2/29 12:31
+     * @Param [ordersConfirmDTO]
+     */
+    void confirmOrder(OrdersConfirmDTO ordersConfirmDTO);
+
+    void rejectOrder(OrdersRejectionDTO ordersRejectionDTO);
 }
