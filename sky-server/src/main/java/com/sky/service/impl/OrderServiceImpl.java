@@ -240,4 +240,74 @@ public class OrderServiceImpl implements OrderService {
         });
         shoppingCartMapper.insertBatch(shoppingCartList);
     }
+
+    /**
+     * @return com.sky.result.PageResult
+     * @Description 条件查询订单信息
+     * @Date 2024/2/28 23:28
+     * @Param [ordersPageQueryDTO]
+     */
+    @Override
+    public PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
+        // 检索订单信息
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        Page<Orders> ordersPage = orderMapper.pageQuery(ordersPageQueryDTO);
+        // 检索结果封装为 List<OrderVO>对象
+        List<OrderVO> orderVOList = getOrderVOList(ordersPage);
+        return new PageResult(ordersPage.getTotal(), orderVOList);
+    }
+
+    /**
+     * @return com.sky.vo.OrderVO
+     * @Description 查询订单详情
+     * @Date 2024/2/29 10:38
+     * @Param [id]
+     */
+    @Override
+    public OrderVO queryOrderDetail(Long orderId) {
+        Orders orders = orderMapper.getByOrderId(orderId);
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
+        orderVO.setOrderDetailList(orderDetailMapper.getByOrderId(orderId));
+        orderVO.setOrderDishes(getOrderDishes(orders));
+        return orderVO;
+    }
+
+    /**
+     * @return java.util.List<com.sky.vo.OrderVO>
+     * @Description 将订单的菜品信息封装到orderVO中，并添加到orderVOList
+     * @Date 2024/2/29 0:40
+     * @Param [ordersPage]
+     */
+    private List<OrderVO> getOrderVOList(Page<Orders> ordersPage) {
+        // 订单列表
+        List<Orders> ordersList = ordersPage.getResult();
+        // 封装的返回对象
+        List<OrderVO> orderVOList = new ArrayList<>();
+        ordersList.forEach(orders -> {
+            OrderVO orderVO = new OrderVO();
+            BeanUtils.copyProperties(orders, orderVO);
+            // 设置菜品信息字符串
+            orderVO.setOrderDishes(getOrderDishes(orders));
+            orderVOList.add(orderVO);
+        });
+        return orderVOList;
+    }
+
+    /**
+     * @return java.lang.String
+     * @Description 根据订单id获取菜品信息字符串
+     * @Date 2024/2/29 0:47
+     * @Param [orders]
+     */
+    private String getOrderDishes(Orders orders) {
+        // 根据订单id获得订单详情列表
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+        // 拼接 orderDishes字段 规则-> 菜品名称1*份数1; 菜品名称2*份数2;
+        List<String> orderDishes = new ArrayList<>();
+        orderDetailList.forEach(orderDetail -> {
+            orderDishes.add(orderDetail.getName() + '*' + orderDetail.getNumber() + ';');
+        });
+        return String.join(" ", orderDishes);
+    }
 }
