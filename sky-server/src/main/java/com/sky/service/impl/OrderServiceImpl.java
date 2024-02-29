@@ -17,6 +17,7 @@ import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
@@ -24,9 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -102,10 +106,10 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception {
+        /*
         // 当前登录用户id
         Long userId = BaseContext.getCurrentId();
         User user = userMapper.getById(userId);
-        /*
         //调用微信支付接口，生成预支付交易单
         JSONObject jsonObject = weChatPayUtil.pay(
                 ordersPaymentDTO.getOrderNumber(), //商户订单号
@@ -271,6 +275,21 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setOrderDetailList(orderDetailMapper.getByOrderId(orderId));
         orderVO.setOrderDishes(getOrderDishes(orders));
         return orderVO;
+    }
+
+    /**
+     * @return com.sky.vo.OrderStatisticsVO
+     * @Description 统计各个状态的订单数量
+     * @Date 2024/2/29 11:02
+     * @Param []
+     */
+    @Override
+    public OrderStatisticsVO getStatistics() {
+        Map<String, Integer> orderStatus = new HashMap<>();
+        orderStatus.put("confirmed", Orders.CONFIRMED);
+        orderStatus.put("deliveryInProgress", Orders.DELIVERY_IN_PROGRESS);
+        orderStatus.put("toBeConfirmed", Orders.TO_BE_CONFIRMED);
+        return orderMapper.getOrderStatusStatistics(orderStatus);
     }
 
     /**

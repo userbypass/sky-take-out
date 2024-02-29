@@ -3,8 +3,11 @@ package com.sky.mapper;
 import com.github.pagehelper.Page;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
+import com.sky.vo.OrderStatisticsVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
@@ -49,4 +52,12 @@ public interface OrderMapper {
     @Select("select * from orders where id = #{orderId}")
     Orders getByOrderId(Long orderId);
 
+    /**
+     * @Description 统计各个状态的订单数量
+     * @Date 2024/2/29 11:02
+     * @Param []
+     * @return com.sky.vo.OrderStatisticsVO
+     */
+    @Select("select count(status = #{confirmed} or null) as confirmed,count(status = #{deliveryInProgress} or null) as deliveryInProgress,count(status = #{toBeConfirmed} or null) as toBeConfirmed from orders")
+    OrderStatisticsVO getOrderStatusStatistics(Map<String, Integer> orderStatus);
 }
