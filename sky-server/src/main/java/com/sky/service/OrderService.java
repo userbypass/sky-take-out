@@ -95,5 +95,19 @@ public interface OrderService {
      */
     void confirmOrder(OrdersConfirmDTO ordersConfirmDTO);
 
+    /**
+     * @return void
+     * @Description 拒单
+     * @Date 2024/2/29 13:03
+     * @Param [ordersRejectionDTO]
+     */
     void rejectOrder(OrdersRejectionDTO ordersRejectionDTO);
+
+    /**
+     * @return void
+     * @Description 取消订单
+     * @Date 2024/2/29 13:03
+     * @Param [ordersCancelDTO]
+     */
+    void cancelOrder(OrdersCancelDTO ordersCancelDTO);
 }

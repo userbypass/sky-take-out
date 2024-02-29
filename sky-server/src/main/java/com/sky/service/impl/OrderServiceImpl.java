@@ -325,14 +325,44 @@ public class OrderServiceImpl implements OrderService {
                     .cancelTime(LocalDateTime.now())
                     .cancelReason(ordersRejectionDTO.getRejectionReason())
                     .build();
-            // 如果用户在拒单时已付款，还需要执行退款操作
+            // 如果在拒单时用户已付款，还需要执行退款操作
             if (Objects.equals(ordersOriginal.getPayStatus(), Orders.PAID)) {
                 System.out.println("执行退款操作...");
                 orders.setPayStatus(Orders.REFUND);
             }
             orderMapper.update(orders);
+        } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+    }
+
+    /**
+     * @return void
+     * @Description 取消订单
+     * @Date 2024/2/29 13:04
+     * @Param [ordersCancelDTO]
+     */
+    @Override
+    public void cancelOrder(OrdersCancelDTO ordersCancelDTO) {
+        Long orderId = ordersCancelDTO.getId();
+        Orders ordersOriginal = orderMapper.getByOrderId(orderId);
+        // 订单不存在无法拒单
+        if (ordersOriginal == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
-        else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        // 订单处于已接单或派送中状态才能取消订单
+        if (Objects.equals(ordersOriginal.getStatus(), Orders.CONFIRMED) || Objects.equals(ordersOriginal.getStatus(), Orders.DELIVERY_IN_PROGRESS)) {
+            Orders orders = Orders.builder()
+                    .id(orderId)
+                    .status(Orders.CANCELLED)
+                    .cancelTime(LocalDateTime.now())
+                    .cancelReason(ordersCancelDTO.getCancelReason())
+                    .build();
+            // 如果在取消顶单时用户已付款，还需要执行退款操作
+            if (Objects.equals(ordersOriginal.getPayStatus(), Orders.PAID)) {
+                System.out.println("执行退款操作...");
+                orders.setPayStatus(Orders.REFUND);
+            }
+            orderMapper.update(orders);
+        } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
     }
 
     /**
