@@ -7,10 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.*;
-import com.sky.entity.AddressBook;
-import com.sky.entity.OrderDetail;
-import com.sky.entity.Orders;
-import com.sky.entity.ShoppingCart;
+import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
@@ -160,13 +157,11 @@ public class OrderServiceImpl implements OrderService {
 
         orderMapper.update(orders);
         // 提示商家有新的订单
-        // 将提示信息封装成Map集合
-        Map<String, Object> message = new HashMap<>();
-        message.put("type", 1);
-        message.put("orderId", ordersDB.getId());
-        message.put("content", outTradeNo);
-        // 再封装成JSON对象
-        String jsonString = JSON.toJSONString(message);
+        String jsonString = JSON.toJSONString(OrderNotify.builder()
+                .type(OrderNotify.NEW_ORDER)
+                .orderId(ordersDB.getId())
+                .content(outTradeNo)
+                .build());
         webSocketServer.sendToAllClient(jsonString);
     }
 
