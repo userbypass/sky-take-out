@@ -7,6 +7,8 @@ import com.sky.vo.OrderStatisticsVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Mapper
@@ -53,11 +55,21 @@ public interface OrderMapper {
     Orders getByOrderId(Long orderId);
 
     /**
+     * @return com.sky.vo.OrderStatisticsVO
      * @Description 统计各个状态的订单数量
      * @Date 2024/2/29 11:02
      * @Param []
-     * @return com.sky.vo.OrderStatisticsVO
      */
     @Select("select count(status = #{confirmed} or null) as confirmed,count(status = #{deliveryInProgress} or null) as deliveryInProgress,count(status = #{toBeConfirmed} or null) as toBeConfirmed from orders")
     OrderStatisticsVO getOrderStatusStatistics(Map<String, Integer> orderStatus);
+
+    /**
+     * @return java.util.List<com.sky.entity.Orders>
+     * @Description 检索超时订单
+     * @Date 2024/3/1 0:07
+     * @Param [pendingPayment, expiredTime]
+     */
+    @Select("select * from orders where status = #{status} and order_time<#{expiredTime}")
+    List<Orders> selectExpiredOrder(Integer status, LocalDateTime expiredTime);
+
 }
