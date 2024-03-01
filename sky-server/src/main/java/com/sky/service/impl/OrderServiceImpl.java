@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -21,6 +22,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,8 @@ public class OrderServiceImpl implements OrderService {
     UserMapper userMapper;
     @Autowired
     WeChatPayUtil weChatPayUtil;
+    @Autowired
+    WebSocketServer webSocketServer;
 
     /**
      * @return com.sky.vo.OrderSubmitVO
@@ -122,6 +126,7 @@ public class OrderServiceImpl implements OrderService {
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
         */
+        // 模拟调用微信接口
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("nonceStr", "");
         jsonObject.put("paySign", "");
@@ -154,6 +159,15 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+        // 提示商家有新的订单
+        // 将提示信息封装成Map集合
+        Map<String, Object> message = new HashMap<>();
+        message.put("type", 1);
+        message.put("orderId", ordersDB.getId());
+        message.put("content", outTradeNo);
+        // 再封装成JSON对象
+        String jsonString = JSON.toJSONString(message);
+        webSocketServer.sendToAllClient(jsonString);
     }
 
     @Override
@@ -364,12 +378,12 @@ public class OrderServiceImpl implements OrderService {
             orderMapper.update(orders);
         } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
     }
-    
+
     /**
+     * @return void
      * @Description 派送订单
      * @Date 2024/2/29 13:56
      * @Param [orderId]
-     * @return void
      */
     @Override
     public void deliveryOrder(Long orderId) {
