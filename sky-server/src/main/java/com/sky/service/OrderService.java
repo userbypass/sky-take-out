@@ -126,4 +126,12 @@ public interface OrderService {
      * @return void
      */
     void completeOrder(Long orderId);
+
+    /**
+     * @Description 用户催单
+     * @Date 2024/3/1 18:16
+     * @Param [id]
+     * @return void
+     */
+    void reminder(Long id);
 }

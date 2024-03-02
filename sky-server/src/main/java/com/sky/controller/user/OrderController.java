@@ -98,5 +98,18 @@ public class OrderController {
         orderService.reOrderSubmit(id);
         return Result.success();
     }
+    
+    /**
+     * @Description 用户催单
+     * @Date 2024/3/1 18:15
+     * @Param [id]
+     * @return com.sky.result.Result
+     */
+    @GetMapping("/reminder/{id}")
+    public Result reminder(@PathVariable Long id){
+        log.info("用户催单，参数{}",id);
+        orderService.reminder(id);
+        return Result.success();
+    }
 
 }

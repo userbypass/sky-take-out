@@ -160,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
         String jsonString = JSON.toJSONString(OrderNotify.builder()
                 .type(OrderNotify.NEW_ORDER)
                 .orderId(ordersDB.getId())
-                .content(outTradeNo)
+                .content("订单号:" + outTradeNo)
                 .build());
         webSocketServer.sendToAllClient(jsonString);
     }
@@ -451,5 +451,25 @@ public class OrderServiceImpl implements OrderService {
             orderDishes.add(orderDetail.getName() + '*' + orderDetail.getNumber() + ';');
         });
         return String.join(" ", orderDishes);
+    }
+
+    /**
+     * @return void
+     * @Description 用户催单
+     * @Date 2024/3/1 18:19
+     * @Param [id]
+     */
+    @Override
+    public void reminder(Long id) {
+        Orders orders = orderMapper.getByOrderId(id);
+        if (Objects.isNull(orders)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        String jsonString = JSON.toJSONString(OrderNotify.builder()
+                .type(OrderNotify.CUSTOMER_REMINDER)
+                .orderId(id)
+                .content("订单号:" + id)
+                .build());
+        webSocketServer.sendToAllClient(jsonString);
     }
 }
